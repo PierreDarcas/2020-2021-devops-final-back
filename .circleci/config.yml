@@ -5,7 +5,7 @@ jobs: # A basic unit of work in a run
     # working_directory: ~/circleci-demo-python-django
     docker: # run the steps with Docker
       # CircleCI Python images available at: https://hub.docker.com/r/circleci/python/
-      - image: circleci/python:3.8.5
+      - image: circleci/python:3.9.1
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
@@ -46,7 +46,7 @@ jobs: # A basic unit of work in a run
           destination: tr1
   test:
     docker:
-      - image: circleci/python:3.7.4
+      - image: circleci/python:3.9.1
       - image: circleci/postgres:9.6.5
         environment:
           POSTGRES_USER: myUsr  
@@ -60,7 +60,7 @@ jobs: # A basic unit of work in a run
       - run:
           name: bd upgrade 
           command: |
-            pip install -U Flask
+            pip install -_user Flask
             flask db init
             flask db migrate
             flask db upgrade
