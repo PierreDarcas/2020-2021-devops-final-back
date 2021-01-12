@@ -79,3 +79,10 @@ jobs: # A basic unit of work in a run
             FLASK_APP: autoapp.py
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
+          
+Workflows: 
+  build-test:
+    - build
+    - test:
+      requires:
+        - build
