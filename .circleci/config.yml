@@ -80,7 +80,8 @@ jobs: # A basic unit of work in a run
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
           
-Workflows: 
+workflows: 
+  version: 2
   build-test:
     - build
     - test:
