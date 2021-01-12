@@ -102,5 +102,5 @@ workflows:
       #     requires:
       #       - build
       - heroku
-          requires
+          requires:
             - build
