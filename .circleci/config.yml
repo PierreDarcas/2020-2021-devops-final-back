@@ -60,6 +60,7 @@ jobs: # A basic unit of work in a run
       - run:
           name: bd upgrade 
           command: |
+            pip install -U Flask
             flask db init
             flask db migrate
             flask db upgrade
