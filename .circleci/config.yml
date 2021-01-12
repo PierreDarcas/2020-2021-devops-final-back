@@ -101,6 +101,6 @@ workflows:
       # - test:
       #     requires:
       #       - build
-      - heroku
+      - heroku:
           requires:
             - build
