@@ -60,9 +60,10 @@ jobs: # A basic unit of work in a run
       - run:
           name: bd upgrade 
           command: |
-            . venv/bin/activate
-            sleep 1
+            flask db init
+            flask db migrate
             flask db upgrade
+            flask test
           environment:
             CONDUIT_SECRET: $CONDUIT_SECRET
             FLASK_APP: autoapp.py
