@@ -44,6 +44,7 @@ jobs: # A basic unit of work in a run
       - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: test-results
           destination: tr1
+
   test:
     docker:
       - image: circleci/python:3.9.1
@@ -81,12 +82,25 @@ jobs: # A basic unit of work in a run
             FLASK_APP: autoapp.py
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
+
+  heroku:
+      docker:
+        - image: buildpack-deps:trusty
+      steps:
+        - checkout
+
+        - run:
+            name: Heroku Deploy
+            command: git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git main
           
 workflows: 
   version: 2
   build-test:
     jobs:
       - build
-      - test:
-          requires:
+      # - test:
+      #     requires:
+      #       - build
+      - heroku
+          requires
             - build
