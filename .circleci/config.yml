@@ -66,7 +66,7 @@ jobs: # A basic unit of work in a run
       - run:
           name: bd upgrade 
           command: |
-            . venv/bin/activate
+            source venv/bin/activate
             sleep 1
             flask db upgrade
           environment:
