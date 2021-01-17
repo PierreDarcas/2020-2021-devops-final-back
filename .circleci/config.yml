@@ -35,7 +35,7 @@ jobs: # A basic unit of work in a run
             pip install -r requirements/dev.txt
           environment:
             CONDUIT_SECRET: "something-really-secret"
-            FLASK_APP: /home/circleci/repo/autoapp.py
+            FLASK_APP: autoapp.py
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
       - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
@@ -75,7 +75,7 @@ jobs: # A basic unit of work in a run
             # flask db test
           environment:
             CONDUIT_SECRET: "something-really-secret"
-            FLASK_APP: /home/circleci/repo/autoapp.py
+            FLASK_APP: autoapp.py
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
 
