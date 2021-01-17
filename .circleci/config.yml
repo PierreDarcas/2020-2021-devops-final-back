@@ -34,7 +34,7 @@ jobs: # A basic unit of work in a run
             . venv/bin/activate
             pip install -r requirements/dev.txt
           environment:
-            CONDUIT_SECRET: $CONDUIT_SECRET
+            CONDUIT_SECRET: "something-really-secret"
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
@@ -71,7 +71,7 @@ jobs: # A basic unit of work in a run
             sleep 1
             flask db upgrade
           environment:
-            CONDUIT_SECRET: $CONDUIT_SECRET
+            CONDUIT_SECRET: "something-really-secret"
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
