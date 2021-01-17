@@ -130,6 +130,8 @@ workflows:
       - heroku:
           requires:
             - build
+            - test
       - docker_build_push:
           requires:
             - build
+            - test
