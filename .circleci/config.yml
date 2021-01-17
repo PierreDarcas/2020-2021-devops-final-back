@@ -68,8 +68,6 @@ jobs: # A basic unit of work in a run
           command: |
             . venv/bin/activate
             sleep 1
-            flask db stamp head
-            flask db migrate
             flask db upgrade
           environment:
             CONDUIT_SECRET: $CONDUIT_SECRET
