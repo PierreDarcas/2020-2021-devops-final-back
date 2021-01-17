@@ -1,0 +1,132 @@
+version: 2 # use CircleCI 2.0
+jobs: # A basic unit of work in a run
+  build: # runs not using Workflows must have a `build` job as entry point 
+    # directory where steps are run
+    working_directory: ~/repo
+    docker: # run the steps with Docker
+      # CircleCI Python images available at: https://hub.docker.com/r/circleci/python/
+      - image: circleci/python:3.9.1
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment: # environment variables for primary container
+          PIPENV_VENV_IN_PROJECT: true
+          DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
+      # CircleCI PostgreSQL images available at: https://hub.docker.com/r/circleci/postgres/
+      - image: circleci/postgres:9.6.9-alpine
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        environment: # environment variables for the Postgres container.
+          POSTGRES_USER: circle_test
+          POSTGRES_PASSOWRD: pwd 
+          POSTGRES_DB: circle_test
+    steps: # steps that comprise the `build` job
+      - checkout # check out source code to working directory
+      # - run: sudo chown -R circleci:circleci /usr/local/bin
+      # - run: sudo chown -R circleci:circleci /usr/local/lib/python3.8/site-packages
+      - restore_cache:
+      # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: deps10-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+      - run:
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements/dev.txt
+          environment:
+            CONDUIT_SECRET: "something-really-secret"
+            FLASK_APP: autoapp.py
+            FLASK_DEBUG: 1
+            DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
+      - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
+          key: deps10-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+
+          paths:
+            - "venv"
+      
+      - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: test-results
+      - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          path: test-results
+          destination: tr1
+
+  test:
+    docker:
+      - image: circleci/python:3.9.1
+      - image: circleci/postgres:9.6.9-alpine
+        environment:
+          POSTGRES_USER: circle_test  
+          POSTGRES_PASSOWRD: pwd 
+          POSTGRES_DB: circle_test
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - deps10-{{ .Branch }}-{{ checksum "requirements/dev.txt" }} 
+            - deps10-{{ .Branch }}-   
+      - run:
+          command: |
+            . venv/bin/activate
+            sleep 1
+            flask db stamp head
+            flask db migrate
+            flask db upgrade
+            # flask db test
+          environment:
+            CONDUIT_SECRET: "something-really-secret"
+            FLASK_APP: autoapp.py
+            FLASK_DEBUG: 1
+            DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
+
+      - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
+          key: deps10-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+          paths:
+            - "venv"
+  heroku:
+      docker:
+        - image: buildpack-deps:trusty
+      working_directory: ~/repo
+      steps:
+        - checkout
+
+        - run:
+            name: Heroku Deploy
+            command: git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git main
+
+  docker_build_push:
+    working_directory: /dockerapp
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build --cache-from=app -t app .
+      - deploy:
+          name: Publish application to docker hub
+          command: |
+            docker login -e $DOCKER_HUB_EMAIL -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+            docker tag app $DOCKERHUB_USERNAME/dev_ops_back_container:$CIRCLE_BUILD_NUM
+            docker tag app $DOCKERHUB_USERNAME/dev_ops_back_container:latest
+            docker push $DOCKERHUB_USERNAME/dev_ops_back_container:$CIRCLE_BUILD_NUM
+            docker push $DOCKERHUB_USERNAME/dev_ops_back_container:latest  
+          
+workflows: 
+  version: 2
+  build-test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - heroku:
+          requires:
+            - build
+            - test
+      - docker_build_push:
+          requires:
+            - build
+            - test
