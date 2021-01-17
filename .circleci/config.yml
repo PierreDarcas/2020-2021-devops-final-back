@@ -61,6 +61,9 @@ jobs: # A basic unit of work in a run
       - run:
           name: bd upgrade 
           command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements/dev.txt
             . venv/bin/activate
             sleep 1
             flask db stamp head
