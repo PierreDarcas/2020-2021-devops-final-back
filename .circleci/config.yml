@@ -2,7 +2,7 @@ version: 2 # use CircleCI 2.0
 jobs: # A basic unit of work in a run
   build: # runs not using Workflows must have a `build` job as entry point 
     # directory where steps are run
-    working_directory: ~/circleci-demo-python-django
+    working_directory: ~/repo
     docker: # run the steps with Docker
       # CircleCI Python images available at: https://hub.docker.com/r/circleci/python/
       - image: circleci/python:3.9.1
@@ -40,6 +40,7 @@ jobs: # A basic unit of work in a run
             DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
       - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
           paths:
             - "venv"
       
@@ -61,9 +62,10 @@ jobs: # A basic unit of work in a run
     steps:
       - checkout
       - restore_cache:
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}    
+          key: 
+            - deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }} 
+            - deps9-{{ .Branch }}-   
       - run:
-          name: bd upgrade 
           command: |
             . venv/bin/activate
             sleep 1
@@ -73,17 +75,7 @@ jobs: # A basic unit of work in a run
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
-      # - run:
-      #     name: flask test
-      #     command: |
-      #       . venv/bin/activate
-      #       sleep 1
-      #       flask test
-      #     environment:
-      #       CONDUIT_SECRET: 'something-really-secret'
-      #       FLASK_APP: autoapp.py
-      #       FLASK_DEBUG: 1
-      #       DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
+
       - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
