@@ -27,7 +27,7 @@ jobs: # A basic unit of work in a run
       # - run: sudo chown -R circleci:circleci /usr/local/lib/python3.8/site-packages
       - restore_cache:
       # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
-          key: deps9-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+          key: deps10-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
       - run:
           command: |
             python3 -m venv venv
@@ -39,7 +39,7 @@ jobs: # A basic unit of work in a run
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
       - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
-          key: deps9-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+          key: deps10-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
 
           paths:
             - "venv"
@@ -63,8 +63,8 @@ jobs: # A basic unit of work in a run
       - checkout
       - restore_cache:
           keys: 
-            - deps9-{{ .Branch }}-{{ checksum "requirements/dev.txt" }} 
-            - deps9-{{ .Branch }}-   
+            - deps10-{{ .Branch }}-{{ checksum "requirements/dev.txt" }} 
+            - deps10-{{ .Branch }}-   
       - run:
           command: |
             . venv/bin/activate
@@ -80,7 +80,7 @@ jobs: # A basic unit of work in a run
             DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
 
       - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
-          key: deps9-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+          key: deps10-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
           paths:
             - "venv"
   heroku:
