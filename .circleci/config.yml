@@ -108,10 +108,10 @@ jobs: # A basic unit of work in a run
           name: Publish application to docker hub
           command: |
             docker login -e $DOCKER_HUB_EMAIL -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-            docker tag app $DOCKERHUB_USERNAME/my-awesome-ci-expr:$CIRCLE_BUILD_NUM
-            docker tag app $DOCKERHUB_USERNAME/my-awesome-ci-expr:latest
-            docker push $DOCKERHUB_USERNAME/my-awesome-ci-expr:$CIRCLE_BUILD_NUM
-            docker push $DOCKERHUB_USERNAME/my-awesome-ci-expr:latest  
+            docker tag app $DOCKERHUB_USERNAME/dev_ops_back_container:$CIRCLE_BUILD_NUM
+            docker tag app $DOCKERHUB_USERNAMEdev_ops_back_container:latest
+            docker push $DOCKERHUB_USERNAME/dev_ops_back_container:$CIRCLE_BUILD_NUM
+            docker push $DOCKERHUB_USERNAME/dev_ops_back_container:latest  
           
 workflows: 
   version: 2
