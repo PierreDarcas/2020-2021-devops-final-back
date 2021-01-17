@@ -11,7 +11,7 @@ jobs: # A basic unit of work in a run
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment: # environment variables for primary container
           PIPENV_VENV_IN_PROJECT: true
-          DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
+          DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
       # CircleCI PostgreSQL images available at: https://hub.docker.com/r/circleci/postgres/
       - image: circleci/postgres:9.6.9-alpine
         auth:
