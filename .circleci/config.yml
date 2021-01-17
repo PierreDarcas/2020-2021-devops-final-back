@@ -58,7 +58,7 @@ jobs: # A basic unit of work in a run
           POSTGRES_USER: circle_test  
           POSTGRES_PASSOWRD: pwd 
           POSTGRES_DB: circle_test
-    working_directory: ~/circleci-demo-python-django
+    working_directory: ~/repo
     steps:
       - checkout
       - restore_cache:
@@ -83,7 +83,7 @@ jobs: # A basic unit of work in a run
   heroku:
       docker:
         - image: buildpack-deps:trusty
-      working_directory: ~/circleci-demo-python-django
+      working_directory: ~/repo
       steps:
         - checkout
 
