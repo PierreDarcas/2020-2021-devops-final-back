@@ -2,7 +2,7 @@ version: 2 # use CircleCI 2.0
 jobs: # A basic unit of work in a run
   build: # runs not using Workflows must have a `build` job as entry point 
     # directory where steps are run
-    # working_directory: ~/circleci-demo-python-django
+    working_directory: ~/circleci-demo-python-django
     docker: # run the steps with Docker
       # CircleCI Python images available at: https://hub.docker.com/r/circleci/python/
       - image: circleci/python:3.9.1
@@ -21,7 +21,6 @@ jobs: # A basic unit of work in a run
           POSTGRES_USER: circle_test
           POSTGRES_PASSOWRD: pwd 
           POSTGRES_DB: circle_test
-    working_directory: ~/repo
     steps: # steps that comprise the `build` job
       - checkout # check out source code to working directory
       # - run: sudo chown -R circleci:circleci /usr/local/bin
@@ -58,7 +57,7 @@ jobs: # A basic unit of work in a run
           POSTGRES_USER: circle_test  
           POSTGRES_PASSOWRD: pwd 
           POSTGRES_DB: circle_test
-    working_directory: ~/repo
+    working_directory: ~/circleci-demo-python-django
     steps:
       - checkout
       - restore_cache:
@@ -66,7 +65,7 @@ jobs: # A basic unit of work in a run
       - run:
           name: bd upgrade 
           command: |
-            source venv/bin/activate
+            . venv/bin/activate
             sleep 1
             flask db upgrade
           environment:
@@ -92,6 +91,7 @@ jobs: # A basic unit of work in a run
   heroku:
       docker:
         - image: buildpack-deps:trusty
+      working_directory: ~/circleci-demo-python-django
       steps:
         - checkout
 
