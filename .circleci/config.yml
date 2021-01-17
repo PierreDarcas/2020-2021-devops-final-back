@@ -33,6 +33,11 @@ jobs: # A basic unit of work in a run
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements/dev.txt
+          environment:
+            CONDUIT_SECRET: $CONDUIT_SECRET
+            FLASK_APP: autoapp.py
+            FLASK_DEBUG: 1
+            DATABASE_URL: postgresql://circle_test:pwd@localhost:5432/circle_test
       - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
