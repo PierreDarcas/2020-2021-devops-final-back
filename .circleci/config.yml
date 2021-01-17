@@ -61,28 +61,31 @@ jobs: # A basic unit of work in a run
       - run:
           name: bd upgrade 
           command: |
-            pip install --user Flask
-            flask db init
+            . venv/bin/activate
+            sleep 1
+            flask db stamp head
             flask db migrate
             flask db upgrade
-            flask test
           environment:
             CONDUIT_SECRET: $CONDUIT_SECRET
             FLASK_APP: autoapp.py
             FLASK_DEBUG: 1
             DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
-      - run:
-          name: flask test
-          command: |
-            . venv/bin/activate
-            sleep 1
-            flask test
-          environment:
-            CONDUIT_SECRET: 'something-really-secret'
-            FLASK_APP: autoapp.py
-            FLASK_DEBUG: 1
-            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
-
+      # - run:
+      #     name: flask test
+      #     command: |
+      #       . venv/bin/activate
+      #       sleep 1
+      #       flask test
+      #     environment:
+      #       CONDUIT_SECRET: 'something-really-secret'
+      #       FLASK_APP: autoapp.py
+      #       FLASK_DEBUG: 1
+      #       DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
+      - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - "venv"
   heroku:
       docker:
         - image: buildpack-deps:trusty
@@ -118,9 +121,9 @@ workflows:
   build-test:
     jobs:
       - build
-      # - test:
-      #     requires:
-      #       - build
+      - test:
+          requires:
+            - build
       - heroku:
           requires:
             - build
