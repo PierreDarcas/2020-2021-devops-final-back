@@ -25,7 +25,8 @@ class Config(object):
         'http://localhost:4200',
         'http://0.0.0.0:4000',
         'http://localhost:4000',
-        'https://super-cool-site-by-pierredarcas.netlify.app/#/',
+        'https://super-cool-site-by-pierredarcas.netlify.app',
+        'http://super-cool-site-by-pierredarcas.netlify.app',
     ]
     JWT_HEADER_TYPE = 'Token'
 
